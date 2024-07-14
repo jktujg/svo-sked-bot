@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "filters": {
+    "nonerror_filter": {
+      "()": "logging_extension.BelowLevelFilter",
+      "level": "ERROR"
+    }
+  },
+  "formatters": {
+    "default": {
+      "format": "%(asctime)s [%(levelname)s]: %(message)s"
+    },
+    "json_formatter": {
+      "()": "logging_extension.JSONFormatter",
+      "fmt_keys": {
+        "created": "created",
+        "level": "levelname",
+        "message": "message",
+        "module": "module",
+        "line": "lineno"
+      }
+    }
+  },
+  "handlers": {
+    "log": {
+      "level": "DEBUG",
+      "formatter": "default",
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stdout",
+      "filters": ["nonerror_filter"]
+    },
+    "errors": {
+      "level": "ERROR",
+      "formatter": "default",
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stderr"
+    },
+    "log_file": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "level": "DEBUG",
+      "formatter": "json_formatter",
+      "filters": ["nonerror_filter"],
+      "filename": "logs/log.log",
+      "maxBytes": 50e6,
+      "backupCount": 5
+    },
+    "errors_file": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "level": "ERROR",
+      "formatter": "json_formatter",
+      "filename": "logs/errors.log",
+      "maxBytes": 50e6,
+      "backupCount": 5
+    },
+    "threaded_handler": {
+      "()": "logging_extension.ThreadedHandler",
+      "handler_0": "cfg://handlers.log",
+      "handler_1": "cfg://handlers.errors",
+      "handler_2": "cfg://handlers.log_file",
+      "handler_3": "cfg://handlers.errors_file"
+    }
+  },
+  "loggers": {
+    "root": {
+      "level": "INFO",
+      "handlers": ["threaded_handler"]
+    }
+  }
+}

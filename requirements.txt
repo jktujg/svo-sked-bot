@@ -1,0 +1,10 @@
+pydantic
+pydantic-settings
+aiogram
+requests
+emoji
+tzdata
+pymongo
+logging-extension
+aiohttp
+git+https://github.com/jktujg/aiogram_calendar.git

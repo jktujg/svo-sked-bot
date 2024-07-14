@@ -1,0 +1,31 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    expose:
+      - 27017
+    volumes:
+      - ./volumes/mongodb/data/:/data/db/
+
+  tg_bot:
+    build:
+      context: .
+      args:
+        UPDATE_METHOD: webhook
+    container_name: tg_bot
+    restart: always
+    environment:
+      DB_HOST: mongodb://mongodb
+      DB_PORT: 27017
+    env_file:
+      - ./.env
+    depends_on:
+      - mongodb
+    volumes:
+      - ./volumes/tg_bot/logs/:/svo-sked-bot/logs/
