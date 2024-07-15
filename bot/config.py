@@ -1,8 +1,9 @@
 import argparse
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urljoin
 
-from pydantic import SecretStr, model_validator
+from pydantic import SecretStr, model_validator, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,9 +27,14 @@ class Settings(BaseSettings):
     WEBHOOK_SECRET: SecretStr | None = None
     WEBHOOK_ENDPOINT: str | None = None
     WEBHOOK_BASE: str | None = None
-    WEBHOOK_URL: str | None = None
     WEB_SERVER_HOST: str | None = None
     WEB_SERVER_PORT: int | None = None
+
+    @computed_field
+    @property
+    def WEBHOOK_URL(self) -> str | None:
+        if None not in (self.WEBHOOK_BASE, self.WEBHOOK_ENDPOINT):
+            return urljoin(self.WEBHOOK_BASE, self.WEBHOOK_ENDPOINT)
 
     @model_validator(mode='after')
     def check_webhook_variables(self) -> 'Settings':
@@ -36,7 +42,6 @@ class Settings(BaseSettings):
             mandatory_unset = list(filter(lambda x: getattr(self, x) is None, [
                 'WEBHOOK_ENDPOINT',
                 'WEBHOOK_BASE',
-                'WEBHOOK_URL',
                 'WEB_SERVER_HOST',
                 'WEB_SERVER_PORT'
             ]))
