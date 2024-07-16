@@ -10,7 +10,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ARG UPDATE_METHOD="long-polling"
-ENV UPDATE_METHOD=${UPDATE_METHOD}
-
-CMD python main.py --update-method ${UPDATE_METHOD}
+CMD python main.py

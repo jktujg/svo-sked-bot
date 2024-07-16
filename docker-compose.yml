@@ -4,10 +4,8 @@ services:
     container_name: mongodb
     restart: always
     env_file:
-      - ./.env
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      - path: ./.env
+        required: false
     expose:
       - 27017
     volumes:
@@ -16,15 +14,11 @@ services:
   tg_bot:
     build:
       context: .
-      args:
-        UPDATE_METHOD: webhook
     container_name: tg_bot
     restart: always
-    environment:
-      DB_HOST: mongodb://mongodb
-      DB_PORT: 27017
     env_file:
-      - ./.env
+      - path: ./.env
+        required: false
     depends_on:
       - mongodb
     volumes:
