@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('--update-method', default='long-polling', choices=['long-polling', 'webhook'])
-cmd_args = argument_parser.parse_args()
+cmd_args, _ = argument_parser.parse_known_args()
 
 
 class Settings(BaseSettings):
